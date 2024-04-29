@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Empresa = ({ nome, valorMercado })=>{
+export default function Empresa({ nome, valorMercado }){
     return(
         <View style={estilo.container}>
             <Text style={estilo.info}>{nome}</Text>
@@ -25,5 +25,3 @@ const estilo = StyleSheet.create({
         paddingStart: 5
     }
 });
-
-export default Empresa;
