@@ -5,10 +5,15 @@ import Empresa from './Empresa';
 const dados = [
   {Id:1, Nome: 'x', ValorDeMercado: '2999'},
   {Id:2, Nome: 'a', ValorDeMercado: '2994'},
-  {Id:3, Nome: 'xx', ValorDeMercado: '2594'}
+  {Id:3, Nome: 'xx', ValorDeMercado: '2594'},
+  {Id:4, Nome: 'xxf', ValorDeMercado: '25946'},
 ];
 
 export default function App() {
+
+  const exibirItens = ({item})=>{
+    return <Empresa  nome={item.Nome} valorMercado={item.ValorDeMercado}/>;
+  }
   
   return (
     <View style={styles.container}>
@@ -16,12 +21,8 @@ export default function App() {
       <View style={styles.listaEmpresa}>
         <FlatList
           data={dados}
-          renderItem={({item})=>{
-            return(<Empresa              
-                nome={item.Nome}
-                valorMercado={item.ValorDeMercado}
-            />)
-          }}
+          renderItem={exibirItens}
+		      keyExtractor={(item)=>item.Id.toString()}
         />
       </View>
     </View>
