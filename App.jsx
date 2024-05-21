@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, Text, StyleSheet} from 'react-native';
+import axios from 'axios';
+import { FlatList, View, Text, StyleSheet } from 'react-native';
 import { TextInput, Provider as PaperProvider } from 'react-native-paper';
-import Empresa from './Empresa';
+import Jogos from './Empresa';  
 
 const theme = {
   colors: {
@@ -10,8 +11,11 @@ const theme = {
 };
 
 export default function App() {
-  const [dados, setEmpresas] = useState([]);
+  const [dados, setJogos] = useState([]);
   const [busca, setBusca] = useState('');
+  const [id, setId] = useState('');
+  const [nome, setNome] = useState('');
+  const [preço, setPreço] = useState('');
 
   async function getDados(url = "") {
     const response = await fetch(url, {
@@ -26,36 +30,74 @@ export default function App() {
     return response.json();
   }
 
-  useEffect(() => {
-    getDados(`http://localhost:3000/empresa?nome=${busca}`).then((listaDeEmpresas) => {
-      setEmpresas(listaDeEmpresas);
+  async function postDados(url = "") {
+    const response = await fetch(url, {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json"
+      }
     });
+    return response.json();
+  }
+
+  
+
+  useEffect(() => {
+    if (busca.trim() !== "") {
+      getDados(`http://localhost:3000/jogo/${busca}`).then((listaDeJogos) => {
+        setJogos(listaDeJogos);
+      });
+    } else {
+      setJogos([]);
+    }
   }, [busca]);
 
+  const handleRegister = async () => {
+    try {
+      await postDados(`http://localhost:3000/jogo`, {
+        id,
+        nome,
+        preço
+      });
+      Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
+      setId('');
+      setNome('');
+      setPreço('');
+    } catch (error) {
+      console.error('Erro ao cadastrar usuário:', error);
+      Alert.alert('Erro', 'Erro ao cadastrar usuário');
+    }
+  };
+
   const exibirItens = ({ item }) => {
-    return <Empresa nome={item.Nome} valorMercado={item.ValorDeMercado} />;
+    return <Jogos id={item.id} nome={item.nome} preço={item.preço} />;  
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Empresas</Text>
+      <Text style={styles.titulo}>Jogos</Text>
       <View>
         <PaperProvider theme={theme}>
           <TextInput
             style={styles.campoBusca}
             label='Buscar ...'
             value={busca}
-            onChangeText={setBusca}
+            onChangeText={(text) => setBusca(text)} 
           />
+          
         </PaperProvider>
       </View>
-      <View style={styles.listaEmpresa}>
+      <View style={styles.listaJogos}>
         <FlatList
           data={dados}
           renderItem={exibirItens}
-          keyExtractor={(item) => item.Id.toString()}
+          keyExtractor={(item) => item.id.toString()}
         />
       </View>
+
     </View>
   );
 }
@@ -67,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
-  listaEmpresa: {
+  listaJogos: {
     height: 600
   },
   titulo: {
@@ -79,5 +121,18 @@ const styles = StyleSheet.create({
   campoBusca: {
     width: 370,
     backgroundColor: '#ffffff',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
   }
 });
+  

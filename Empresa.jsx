@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 
-export default function Empresa({ nome, valorMercado }){
+export default function Jogos({ id, nome, preço }){
     return(
         <View style={estilo.container}>
+            <Text style={estilo.info}>{id}</Text>
             <Text style={estilo.info}>{nome}</Text>
-            <Text style={estilo.info}>${valorMercado}</Text>
+            <Text style={estilo.info}>{preço}</Text>
         </View>
     );
 }
