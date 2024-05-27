@@ -3,11 +3,6 @@ import axios from 'axios';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 import { TextInput, Provider as PaperProvider } from 'react-native-paper';
 import Jogos from './Empresa';  
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import PageCadastrar from './Cadastrar';
-import PageConsultar from './Listar';
-
 
 const theme = {
   colors: {
@@ -15,10 +10,10 @@ const theme = {
   }
 };
 
-const App = () => {
+const PageConsultar = () => {
   const [dados, setJogos] = useState([]);
   const [busca, setBusca] = useState('');
-  
+
 
   async function getDados(url = "") {
     const response = await fetch(url, {
@@ -33,6 +28,10 @@ const App = () => {
     return response.json();
   }
 
+  
+
+  
+
   useEffect(() => {
     if (busca.trim() !== "") {
       getDados(`http://localhost:3000/jogo/${busca}`).then((listaDeJogos) => {
@@ -43,28 +42,56 @@ const App = () => {
     }
   }, [busca]);
 
-  
+  const handleRegister = async () => {
+    try {
+      await postDados(`http://localhost:3000/jogo`, {
+        id,
+        nome,
+        preço
+      });
+      Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
+      setId('');
+      setNome('');
+      setPreço('');
+    } catch (error) {
+      console.error('Erro ao cadastrar usuário:', error);
+      Alert.alert('Erro', 'Erro ao cadastrar usuário');
+    }
+  };
+
   const exibirItens = ({ item }) => {
     return <Jogos id={item.id} nome={item.nome} preço={item.preço} />;  
   }
 
-const Tab = createBottomTabNavigator();
-
   return (
-    <NavigationContainer>
-    <Tab.Navigator>
-      <Tab.Screen name="Consultar" component={PageConsultar} />
-      <Tab.Screen name="Cadastrar" component={PageCadastrar} />
-    </Tab.Navigator>
-  </NavigationContainer>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Jogos</Text>
+      <View>
+        <PaperProvider theme={theme}>
+          <TextInput
+            style={styles.campoBusca}
+            label='Buscar ...'
+            value={busca}
+            onChangeText={(text) => setBusca(text)} 
+          />
+          
+        </PaperProvider>
+      </View>
+      <View style={styles.listaJogos}>
+        <FlatList
+          data={dados}
+          renderItem={exibirItens}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
+
+     
+
+    </View>
   );
 }
- 
 
-
-
-
-export default App;
+export default PageConsultar;
 
 const styles = StyleSheet.create({
   container: {
