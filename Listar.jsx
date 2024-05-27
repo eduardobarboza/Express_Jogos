@@ -28,13 +28,9 @@ const PageConsultar = () => {
     return response.json();
   }
 
-  
-
-  
-
   useEffect(() => {
     if (busca.trim() !== "") {
-      getDados(`http://localhost:3000/jogo/${busca}`).then((listaDeJogos) => {
+      getDados(`http://localhost:3000/jogo?nome=${busca}`).then((listaDeJogos) => {
         setJogos(listaDeJogos);
       });
     } else {
@@ -42,22 +38,6 @@ const PageConsultar = () => {
     }
   }, [busca]);
 
-  const handleRegister = async () => {
-    try {
-      await postDados(`http://localhost:3000/jogo`, {
-        id,
-        nome,
-        preço
-      });
-      Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
-      setId('');
-      setNome('');
-      setPreço('');
-    } catch (error) {
-      console.error('Erro ao cadastrar usuário:', error);
-      Alert.alert('Erro', 'Erro ao cadastrar usuário');
-    }
-  };
 
   const exibirItens = ({ item }) => {
     return <Jogos id={item.id} nome={item.nome} preço={item.preço} />;  
@@ -81,12 +61,8 @@ const PageConsultar = () => {
         <FlatList
           data={dados}
           renderItem={exibirItens}
-          keyExtractor={(item) => item.id.toString()}
         />
       </View>
-
-     
-
     </View>
   );
 }

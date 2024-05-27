@@ -11,11 +11,13 @@ const PageCadastrar = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/jogo', {
+      let j = {
         nome,
         id,
-        preço
-      });
+        preço,
+      };
+      console.log(j);
+      const response = await axios.post('http://localhost:3000/jogo', j);
       
       
       if (response.status === 201) {
